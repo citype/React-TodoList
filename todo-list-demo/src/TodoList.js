@@ -6,6 +6,7 @@ import { List } from 'antd';
 // import store from './store/index.js'
 // 默认调用 index.js
 import store from './store'
+import { CHANGE_INPUT_VALUE, ADD_TODO_ITEM, DELETE_TODO_ITEM } from './store/actionTypes.js'
 
 class TodoList extends Component {
   constructor(props) {
@@ -15,6 +16,7 @@ class TodoList extends Component {
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleStoreChange = this.handleStoreChange.bind(this);
     this.handleButtonClick = this.handleButtonClick.bind(this);
+
     // 让组件里面的数据跟着 store 更新 订阅 store 只要 store 发生改变 handleStoreChange 将被调用
     store.subscribe(this.handleStoreChange);
   }
@@ -34,17 +36,19 @@ class TodoList extends Component {
         </Button>
 
         <List
+                size="small"
           style={{ marginTop: "10px", width: "300px" }}
           dataSource={this.state.list}
-          renderItem={item => <List.Item>{item}</List.Item>}
+          renderItem={(item,index) => <List.Item onClick={this.handleItemDelete.bind(this, index)}>{item}</List.Item>}
         />
+
       </div>
     );
   }
   handleInputChange(e) {
     // 告诉 sotre 改变 input—value 的值为，e.target.value
     const action = {
-      type: "change_input_value",
+        type: CHANGE_INPUT_VALUE,
       value: e.target.value
     };
     store.dispatch(action);
@@ -58,11 +62,18 @@ class TodoList extends Component {
   }
   handleButtonClick() {
       const action = {
-          type :"add_todo_item",
+          type : ADD_TODO_ITEM,
       }
       store.dispatch(action)
 
   }
+    handleItemDelete(index) {
+        const action = {
+            type: DELETE_TODO_ITEM,
+            index
+        }
+        store.dispatch(action)
+    }
 }
 
  export default TodoList;
